@@ -1,49 +1,30 @@
-'use client';
+import React from "react";
 
-import { useEffect } from 'react';
-
-declare global {
-  interface Window {
-    paypal: any;
-  }
-}
-
-type PayPalButtonProps = {
-  amount: number;
-  onSuccess: (details: any) => void;
+const PayPalButton = () => {
+  return (
+    <form
+      action="https://www.paypal.com/cgi-bin/webscr"
+      method="post"
+      target="_blank"
+    >
+      <input type="hidden" name="cmd" value="_s-xclick" />
+      <input type="hidden" name="hosted_button_id" value="YOUR_HOSTED_BUTTON_ID" />
+      <input
+        type="image"
+        src="https://www.paypalobjects.com/en_US/i/btn/btn_buynow_LG.gif"
+        border="0"
+        name="submit"
+        alt="Pay with PayPal"
+      />
+      <img
+        alt=""
+        border="0"
+        src="https://www.paypal.com/en_UG/i/scr/pixel.gif"
+        width="1"
+        height="1"
+      />
+    </form>
+  );
 };
 
-export default function PayPalButton({ amount, onSuccess }: PayPalButtonProps) {
-  useEffect(() => {
-    if (!window.paypal) return;
-
-    window.paypal.Buttons({
-      style: {
-        layout: 'vertical',
-        color: 'gold',
-        shape: 'rect',
-        label: 'paypal',
-      },
-      createOrder: (_data: any, actions: any) => {
-        return actions.order.create({
-          purchase_units: [
-            {
-              amount: {
-                value: amount.toFixed(2),
-              },
-            },
-          ],
-        });
-      },
-      onApprove: async (_data: any, actions: any) => {
-        const details = await actions.order.capture();
-        onSuccess(details);
-      },
-      onError: (err: any) => {
-        console.error('PayPal Checkout Error:', err);
-      },
-    }).render('#paypal-button-container');
-  }, [amount, onSuccess]);
-
-  return <div id="paypal-button-container" className="mt-4" />;
-}
+export default PayPalButton;
